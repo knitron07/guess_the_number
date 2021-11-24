@@ -47,7 +47,7 @@ const GameScreen = (props) => {
   const { userChoice, gameOverHandler } = props;
   useEffect(() => {
     if (currentGuess === props.userChoice) {
-      props.gameOverHandler(1);
+      props.gameOverHandler(rounds);
     }
   }, [gameOverHandler, currentGuess, userChoice]);
 
