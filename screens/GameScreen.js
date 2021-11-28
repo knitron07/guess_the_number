@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import Card from '../components/Card';
 import NumberContainer from '../components/NumberContainer';
 const generateRandonNumber = (min, max, exclude) => {
@@ -14,14 +21,13 @@ const generateRandonNumber = (min, max, exclude) => {
   }
 };
 const GameScreen = (props) => {
-  const [rounds, setRounds] = useState(0);
   const [currentGuess, setCurrentGuess] = useState(
     generateRandonNumber(1, 100, props.userChoice),
   );
+  const [guessStreek, setGuessStreek] = useState([]);
   const low = useRef(1);
   const high = useRef(100);
   const nextGuessHandler = (direction) => {
-    console.log(currentGuess, props.userChoice);
     if (
       (direction === 'lower' && currentGuess > props.userChoice) ||
       (direction === 'greater' && currentGuess < props.userChoice)
@@ -37,9 +43,8 @@ const GameScreen = (props) => {
         high.current,
         currentGuess,
       );
-      console.log(newGuessNumber);
+      setGuessStreek((prev) => [currentGuess, ...prev]);
       setCurrentGuess(newGuessNumber);
-      setRounds((currentRounds) => currentRounds + 1);
     } else {
       Alert.alert("Don't cheat", "Don't cheat in your life or in game....! ");
     }
@@ -47,7 +52,7 @@ const GameScreen = (props) => {
   const { userChoice, gameOverHandler } = props;
   useEffect(() => {
     if (currentGuess === props.userChoice) {
-      props.gameOverHandler(rounds);
+      props.gameOverHandler(guessStreek.length);
     }
   }, [gameOverHandler, currentGuess, userChoice]);
 
@@ -59,6 +64,16 @@ const GameScreen = (props) => {
         <Button title="-" onPress={nextGuessHandler.bind(this, 'lower')} />
         <Button title="+" onPress={nextGuessHandler.bind(this, 'greater')} />
       </Card>
+      <View style={styles.guessContainer}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {guessStreek.map((guess, idx) => (
+            <View style={styles.guess}>
+              <Text>#{guessStreek.length - idx}</Text>
+              <Text>{guess}</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -77,5 +92,21 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: 300,
     maxWidth: '80%',
+  },
+  guessContainer: {
+    flex: 1,
+    width: '60%',
+    marginTop: 20,
+  },
+  scrollContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  guess: {
+    paddingHorizontal: 20,
+    width: '100%',
+    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
