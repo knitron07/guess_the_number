@@ -6,6 +6,7 @@ import {
   Button,
   Alert,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import Card from '../components/Card';
 import NumberContainer from '../components/NumberContainer';
@@ -67,7 +68,7 @@ const GameScreen = (props) => {
       <View style={styles.guessContainer}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {guessStreek.map((guess, idx) => (
-            <View style={styles.guess}>
+            <View key={idx} style={styles.guess}>
               <Text>#{guessStreek.length - idx}</Text>
               <Text>{guess}</Text>
             </View>
@@ -95,11 +96,12 @@ const styles = StyleSheet.create({
   },
   guessContainer: {
     flex: 1,
-    width: '60%',
+    width: Dimensions.get('window').width < 600 ? '80%' : '60%',
     marginTop: 20,
   },
   scrollContainer: {
-    flex: 1,
+    flexGrow: 1,
+    // alignItems: 'center',
     justifyContent: 'flex-end',
   },
   guess: {
